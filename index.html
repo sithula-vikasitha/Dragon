@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="si">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dragon Bank — Cards (Standalone)</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',sans-serif;background:#f8fafc;color:#0f172a;margin:0;padding:20px}
+    .container{max-width:900px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .search{padding:8px;border:1px solid #cbd5e1;border-radius:6px;width:220px}
+    .btn{background:#0ea5e9;color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+    .btn-muted{background:#fff;border:1px solid #cbd5e1;color:#0f172a}
+    .card{background:white;border-radius:10px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(2,6,23,0.06)}
+    .card .meta{font-size:14px}
+    .card .amt{font-weight:700;margin-top:6px}
+    .small-btn{width:36px;height:36px;border-radius:999px;border:1px solid #cbd5e1;background:#fff;cursor:pointer}
+    .top-row{display:flex;gap:8px;align-items:center}
+    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center}
+    .modal{background:white;padding:16px;border-radius:8px;width:320px}
+    label{display:block;margin-top:8px;font-size:13px}
+    input[type="text"], input[type="number"]{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;margin-top:6px}
+    .muted{color:#64748b;font-size:13px}
+    .flex{display:flex}
+    .gap-2{gap:8px}
+    .right{justify-content:flex-end}
+    footer{margin-top:18px;color:#64748b;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1 style="margin:0">Dragon Bank — Cards</h1>
+        <div class="muted">Saved in your browser (localStorage)</div>
+      </div>
+      <div class="top-row">
+        <input id="search" class="search" placeholder="Search cards..." />
+        <button id="addBtn" class="btn" title="Add card">＋</button>
+      </div>
+    </header>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div id="count" class="muted">0 cards</div>
+      <div style="display:flex;gap:8px">
+        <button id="applyDaily" class="btn-muted">Apply daily +Rs10</button>
+        <button id="exportBtn" class="btn-muted">Export JSON</button>
+      </div>
+    </div>
+
+    <main id="list"></main>
+
+    <footer>Note: Daily Rs10 additions are computed when you open the site (based on last update date).</footer>
+  </div>
+
+  <!-- Modal (hidden initially) -->
+  <div id="modal" style="display:none" class="modal-back">
+    <div class="modal">
+      <h3 style="margin:0 0 6px 0">Add new card</h3>
+      <label>Name</label>
+      <input id="nameInput" type="text" />
+      <label>Initial Amount (Rs)</label>
+      <input id="amtInput" type="number" min="0" />
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button id="cancel" class="btn-muted">Cancel</button>
+        <button id="create" class="btn">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const STORAGE_KEY = 'dragon_bank_cards_v1';
+      const listEl = document.getElementById('list');
+      const addBtn = document.getElementById('addBtn');
+      const modal = document.getElementById('modal');
+      const nameInput = document.getElementById('nameInput');
+      const amtInput = document.getElementById('amtInput');
+      const createBtn = document.getElementById('create');
+      const cancelBtn = document.getElementById('cancel');
+      const searchEl = document.getElementById('search');
+      const countEl = document.getElementById('count');
+      const applyDailyBtn = document.getElementById('applyDaily');
+      const exportBtn = document.getElementById('exportBtn');
+
+      function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+      function daysBetween(a,b){ const ms=24*60*60*1000; return Math.floor((b - a)/ms); }
+
+      let cards = [];
+
+      function load(){
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const today = startOfDay(new Date());
+        if(raw){
+          try{
+            const parsed = JSON.parse(raw);
+            cards = parsed.map(c=>{
+              if(!c.lastUpdated) c.lastUpdated = c.createdAt || new Date().toISOString();
+              const last = new Date(c.lastUpdated);
+              const d = daysBetween(startOfDay(last), today);
+              if(d > 0){
+                return {...c, amount: Number(c.amount) + d*10, lastUpdated: today.toISOString()};
+              }
+              return c;
+            });
+            save(); // persist any changes from daily applying
+          }catch(e){ cards = []; }
+        }else{
+          cards = [];
+        }
+      }
+
+      function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); }
+
+      function render(){
+        const q = searchEl.value.trim().toLowerCase();
+        const filtered = cards.filter(c => c.name.toLowerCase().includes(q));
+        listEl.innerHTML = '';
+        if(filtered.length === 0){
+          listEl.innerHTML = '<div class="muted" style="padding:12px;background:#fff;border-radius:8px">No cards found.</div>';
+        }else{
+          filtered.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+              <div>
+                <div style="font-weight:600">${escapeHtml(c.name)}</div>
+                <div class="amt">Rs ${Number(c.amount)}</div>
+                <div class="muted" style="margin-top:6px;font-size:12px">Last updated: ${new Date(c.lastUpdated).toLocaleDateString()}</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button class="small-btn top-up" data-id="${c.id}" title="Top-up">＋</button>
+                <button class="small-btn delete" data-id="${c.id}" title="Delete">🗑</button>
+              </div>
+            `;
+            listEl.appendChild(div);
+          });
+        }
+        countEl.textContent = `${cards.length} card${cards.length!==1? 's':''}`;
+        attachCardHandlers();
+      }
+
+      function attachCardHandlers(){
+        document.querySelectorAll('.top-up').forEach(btn=>{
+          btn.onclick = ()=> {
+            const id = btn.getAttribute('data-id');
+            const input = prompt('Top-up amount (Rs):');
+            if(input === null) return;
+            const n = Number(input);
+            if(Number.isNaN(n)){ alert('Valid number ekak danna.'); return; }
+            cards = cards.map(c => c.id === id ? {...c, amount: Number(c.amount) + n, lastUpdated: new Date().toISOString()} : c);
+            save(); render();
+          }
+        });
+        document.querySelectorAll('.delete').forEach(btn=>{
+          btn.onclick = ()=> {
+            const id = btn.getAttribute('data-id');
+            if(!confirm('Delete karanna kiyala sureda?')) return;
+            cards = cards.filter(c => c.id !== id);
+            save(); render();
+          }
+        });
+      }
+
+      function openModal(){ modal.style.display = 'flex'; nameInput.focus(); }
+      function closeModal(){ modal.style.display = 'none'; nameInput.value=''; amtInput.value=''; }
+
+      addBtn.addEventListener('click', openModal);
+      cancelBtn.addEventListener('click', closeModal);
+
+      createBtn.addEventListener('click', function(){
+        const name = nameInput.value.trim();
+        const amount = Number(amtInput.value) || 0;
+        if(!name){ alert('Name ekak danna.'); return; }
+        const now = new Date().toISOString();
+        const card = { id: String(Date.now()) + Math.random().toString(36).slice(2,8), name, amount, createdAt: now, lastUpdated: now };
+        cards.unshift(card);
+        save();
+        render();
+        closeModal();
+      });
+
+      searchEl.addEventListener('input', render);
+
+      applyDailyBtn.addEventListener('click', function(){
+        const today = startOfDay(new Date());
+        cards = cards.map(c => {
+          const last = new Date(c.lastUpdated || c.createdAt || new Date());
+          const d = daysBetween(startOfDay(last), today);
+          if(d > 0){
+            return {...c, amount: Number(c.amount) + d*10, lastUpdated: today.toISOString()};
+          }
+          return c;
+        });
+        save(); render();
+        alert('Applied daily Rs10 increments where applicable.');
+      });
+
+      exportBtn.addEventListener('click', function(){
+        const data = JSON.stringify(cards, null, 2);
+        const blob = new Blob([data], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'dragon_cards.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // small helper to escape html
+      function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+
+      // initial load
+      load();
+      render();
+
+      // close modal if click outside
+      modal.addEventListener('click', function(e){
+        if(e.target === modal) closeModal();
+      });
+
+    })();
+  </script>
+</body>
+</html>

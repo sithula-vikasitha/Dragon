@@ -1,699 +1,220 @@
 <!doctype html>
-<html lang="si">
+<html lang="en">
 <head>
-  <meta name="google-site-verification" content="AioHky6gBYFTKoXFnESEp7ri323X5lvvZAtSQ48WSLM" />
+  <meta name="google-site-verification" content="AioHky6gBYFTKoXFnESEp7ri323X5lvvZAtSQ48WSLM" />	
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dragon Bank — Cards (Cloud Sync - Multi-Device)</title>
+  <title>Dragon — Cards</title>
   <style>
-    /* ------------------------------------------- */
-    /* DECORATED STYLES FOR DRAGON BANK */
-    /* ------------------------------------------- */
-    :root {
-      --primary-blue: #0ea5e9; /* Sky Blue */
-      --secondary-dark: #1e293b; /* Slate 800 */
-      --light-bg: #f0f4f8; /* Light background for contrast */
-      --card-shadow: 0 4px 12px rgba(14, 165, 233, 0.15), 0 2px 4px rgba(0,0,0,0.05); /* Blue-tinted shadow */
-    }
-    
-    body {
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans', sans-serif;
-      background-color: var(--light-bg); 
-      color: var(--secondary-dark);
-      margin: 0;
-      padding: 30px 20px;
-    }
-    
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px; 
-      padding-bottom: 15px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--primary-blue);
-      margin: 0;
-    }
-    
-    .search {
-      padding: 10px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px; 
-      width: 250px;
-      transition: all 0.2s;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .search:focus {
-        border-color: var(--primary-blue);
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
-    }
-    
-    /* --- BUTTON STYLES --- */
-    .btn {
-      background: var(--primary-blue);
-      color: white;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-      box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3), 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .btn:hover {
-      background: #0c8cdb;
-      box-shadow: 0 6px 8px rgba(14, 165, 233, 0.4), 0 2px 4px rgba(0,0,0,0.15);
-      transform: translateY(-1px);
-    }
-    
-    .btn-muted {
-      background: #fff;
-      border: 1px solid #cbd5e1;
-      color: var(--secondary-dark);
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.2s;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .btn-muted:hover {
-      background: #f1f5f9;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    /* --- CARD STYLES --- */
-    .card {
-      background: linear-gradient(145deg, #ffffff, #f7f9fc); 
-      border-radius: 12px; 
-      padding: 18px 24px;
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: var(--card-shadow); 
-      border: 1px solid #eef2f6;
-      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2), 0 4px 8px rgba(0,0,0,0.1);
-    }
-    
-    .card .meta {
-      font-size: 14px;
-    }
-    .card .amt {
-      font-weight: 800; 
-      font-size: 1.6rem;
-      color: var(--primary-blue);
-      margin-top: 4px;
-      letter-spacing: -0.5px;
-    }
-    
-    .small-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid #cbd5e1;
-      background: #fff;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      line-height: 1;
-      color: #64748b;
-    }
-    .small-btn:hover {
-      background: var(--primary-blue);
-      color: white;
-      border-color: var(--primary-blue);
-      transform: scale(1.05);
-    }
-
-    /* Input and Modal styles */
-    .modal-back {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6); 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      backdrop-filter: blur(3px); 
-    }
-    .modal {
-      background: white;
-      padding: 24px;
-      border-radius: 12px;
-      width: 360px; 
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-    }
-    
-    input[type="text"], input[type="number"], input[type="password"] {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #cbd5e1;
-        margin-top: 6px;
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
-        outline: none;
-    }
-    input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus {
-        border-color: var(--primary-blue);
-        box-shadow: 0 0 0 1px var(--primary-blue);
-    }
-    
-    label {
-        display: block;
-        margin-top: 12px; 
-        font-size: 14px;
-        font-weight: 500;
-        color: var(--secondary-dark);
-    }
-
-    .muted {
-      color: #64748b;
-      font-size: 14px;
-    }
-    
-    /* Utility & Footer adjustments */
-    .top-row {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    
-    footer {
-      margin-top: 30px;
-      color: #94a3b8;
-      font-size: 12px;
-      text-align: center;
-    }
-
-    /* Small screen adjustments for responsiveness */
-    @media (max-width: 600px) {
-        header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
-        }
-        .top-row {
-            width: 100%;
-            justify-content: space-between;
-        }
-        .search {
-            flex-grow: 1; 
-            width: auto;
-        }
-        .card {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px; 
-            padding: 15px;
-        }
-        .card .amt {
-            font-size: 1.4rem;
-        }
-        .modal {
-            width: 90%;
-            max-width: 360px;
-        }
-    }
-
+    :root{--accent:#0b6;--bg:#0f1720;--card:#0b1220;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef6;background:#06111a;min-height:100vh;display:flex;flex-direction:column}
+    /* background video */
+    .bg-video{position:fixed;inset:0;z-index:-1;object-fit:cover;width:100%;height:100%;opacity:0.28}
+    header{display:flex;align-items:center;gap:12px;padding:18px 20px}
+    header img.logo{width:46px;height:46px;object-fit:contain;border-radius:8px}
+    header .title{font-weight:700;font-size:20px}
+    .container{padding:18px;max-width:1100px;margin:0 auto;width:100%}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+    .btn{background:var(--accent);color:#04211a;padding:10px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;color:#cfe9e0;border:1px solid rgba(255,255,255,0.06)}
+    .search{flex:1;min-width:160px}
+    input[type=text], input[type=number]{width:100%;padding:10px;border-radius:8px;border:0;background:var(--glass);color:#e6eef6}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06));padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,10,0.6);display:flex;flex-direction:column;gap:8px}
+    .card .top{display:flex;justify-content:space-between;align-items:center}
+    .muted{opacity:0.8;font-size:13px}
+    .small{font-size:13px}
+    .actions{display:flex;gap:8px;margin-top:6px}
+    .note{font-size:13px;color:#9fb7b0}
+    footer{margin-top:auto;padding:14px;text-align:center;color:#9fb7b0}
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,8,0.6);display:none;align-items:center;justify-content:center}
+    .modal{background:#07121a;padding:18px;border-radius:12px;max-width:420px;width:96%}
+    label{display:block;font-size:13px;margin:8px 0 6px}
+    @media(max-width:520px){header .title{font-size:16px} .btn{padding:8px 10px}}
   </style>
 </head>
 <body>
+  <!-- Background video (use background.mp4 in same folder) -->
+  <video class="bg-video" autoplay muted loop playsinline>
+    <source src="background.mp4" type="video/mp4" />
+  </video>
+
+  <header>
+    <img src="logo.jpg" alt="logo" class="logo">
+    <div class="title">Dragon</div>
+  </header>
+
   <div class="container">
-    <header>
-      <div>
-        <h1 style="margin:0">Dragon Bank — Cards</h1>
-        <div class="muted">Cloud Storage (බහුවිධ උපාංග සමමුහුර්තකරණය)</div>
-        <div class="muted" id="userIdDisplay" style="font-size:10px; margin-top: 5px;">User ID: Connecting...</div>
-      </div>
-      <div class="top-row">
-        <input id="search" class="search" placeholder="Search cards..." />
-        <button id="addBtn" class="btn" title="Add card">＋</button>
-      </div>
-    </header>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div id="count" class="muted">0 cards</div>
-      <div style="display:flex;gap:8px">
-        <button id="applyDaily" class="btn-muted">Apply daily +Rs10</button>
-        <button id="exportBtn" class="btn-muted">Export JSON</button>
-      </div>
+    <div class="controls">
+      <button id="addBtn" class="btn">(+) Create card</button>
+      <input id="search" class="search" type="text" placeholder="Search cards by name...">
+      <button id="exportBtn" class="btn ghost">Export JSON</button>
+      <button id="importBtn" class="btn ghost">Import JSON</button>
+      <button id="shareBtn" class="btn ghost">Share code</button>
     </div>
 
-    <main id="list"></main>
-    <div id="loading" class="muted" style="text-align:center; padding: 20px;">Loading cards...</div>
+    <div class="note">Cards autosave in your browser. Use Export/Import or Share code to view cards on another device (no server required). Daily increment: <strong>Rs 10 per day</strong> is added automatically to displayed amounts.</div>
 
-    <footer>Note: Daily Rs10 additions are computed when you open the site (based on last update date).</footer>
+    <div id="cards" class="cards" style="margin-top:12px"></div>
   </div>
 
-  <!-- Modal for Adding New Card -->
-  <div id="modal" style="display:none" class="modal-back">
+  <!-- footer -->
+  <footer>Dragon • Your cards are stored locally unless you export or share them.</footer>
+
+  <!-- modal -->
+  <div id="modalBackdrop" class="modal-backdrop">
     <div class="modal">
-      <h3 style="margin:0 0 12px 0">Add New Card</h3>
-      <label style="margin-top:0;">Name</label>
-      <input id="nameInput" type="text" />
-      <label>Initial Amount (Rs)</label>
-      <input id="amtInput" type="number" min="0" />
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">
-        <button id="cancel" class="btn-muted">Cancel</button>
-        <button id="create" class="btn">Create</button>
+      <h3 id="modalTitle">Create card</h3>
+      <label for="name">Name</label>
+      <input id="name" type="text" placeholder="e.g. My pocket money">
+      <label for="amount">Amount (Rs)</label>
+      <input id="amount" type="number" min="0" placeholder="1000">
+      <div style="margin-top:10px;display:flex;gap:8px;align-items:center;justify-content:flex-end">
+        <button id="cancel" class="btn ghost">Cancel</button>
+        <button id="save" class="btn">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- Generic Dialog Modal (for confirmation and simple alerts) -->
-  <div id="dialogModal" style="display:none" class="modal-back">
-    <div class="modal" style="width:360px">
-      <h3 id="dialogTitle" style="margin:0 0 6px 0">Alert</h3>
-      <div id="dialogMessage" style="margin-bottom:12px; font-size: 15px;"></div>
-      <div id="dialogInputContainer" style="display:none">
-          <label id="dialogInputLabel" class="muted" style="margin-top:0;">Enter</label>
-          <input id="dialogInput" type="number" /> 
-      </div>
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
-        <button id="dialogCancel" class="btn-muted">Cancel</button>
-        <button id="dialogConfirm" class="btn">Confirm</button>
-      </div>
-    </div>
-  </div>
+  <!-- hidden file input for import -->
+  <input id="fileInput" type="file" accept="application/json" style="display:none">
 
-  <script type="module">
-    // Firebase Imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    setLogLevel('Debug'); // Enable debug logging for Firestore
+<script>
+(function(){
+  // --- Config ---
+  const STORAGE_KEY = 'dragon_cards_v1';
+  const DAILY_INCREMENT = 10; // Rs per day
+  const AUTO_APPLY_ON_LOAD = true; // if true, on load we update stored baseAmount to include days passed
 
-    (async function(){
-      
-      // --- START: Firebase Configuration Setup (Uses Canvas environment variables) ---
-      
-      // If the dynamic variables are not defined, use placeholders (though they should be provided by Canvas)
-      const placeholderConfig = {
-          apiKey: "AIzaSy_Placeholder_Key_12345",
-          authDomain: "placeholder-app.firebaseapp.com",
-          projectId: "placeholder-app",
-          storageBucket: "placeholder-app.firebasestorage.app",
-          messagingSenderId: "1234567890",
-          appId: "1:1234567890:web:abcdefg"
-      };
+  // --- util ---
+  function $(id){return document.getElementById(id)}
+  function uid(){return 'c_'+Math.random().toString(36).slice(2,10)}
+  function daysBetween(d1,d2){
+    const msPerDay = 1000*60*60*24;
+    return Math.floor((d2 - d1) / msPerDay);
+  }
+  function load(){
+    try{const raw=localStorage.getItem(STORAGE_KEY); return raw?JSON.parse(raw):[] }catch(e){return []}
+  }
+  function save(cards){ localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)) }
 
-      // 1. Determine Firebase Config: Use Canvas injection first, falling back to placeholder
-      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : placeholderConfig;
-      
-      // 2. Determine App ID (Crucial for Firestore path): Use Canvas injection first, then the projectId from the config.
-      const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId || 'default-app-id'; 
-      
-      // 3. Determine Auth Token: Use Canvas injection.
-      const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-      
-      // --- END: Firebase Configuration Setup ---
-
-      // Initialize Firebase
-      let app, db, auth;
-      try {
-          app = initializeApp(firebaseConfig);
-          db = getFirestore(app);
-          auth = getAuth(app);
-      } catch (e) {
-          console.error("Firebase initialization failed:", e);
-          document.getElementById('loading').textContent = 'Error: Failed to initialize Firebase. Check console.';
-          return;
+  // --- apply daily increments to stored base (so data is synced between devices after import) ---
+  function applyDailyIncrements(cards){
+    const now = new Date();
+    let changed=false;
+    cards.forEach(c=>{
+      const created = new Date(c.lastApplied || c.createdAt);
+      const days = daysBetween(created, now);
+      if(days>0){
+        c.baseAmount = Number(c.baseAmount) + days * DAILY_INCREMENT;
+        c.lastApplied = now.toISOString();
+        changed=true;
       }
+    });
+    if(changed) save(cards);
+    return cards;
+  }
 
-      let userId = null;
-      let isAuthReady = false;
-      let cards = [];
+  // --- calc displayed amount ---
+  function displayedAmount(card){
+    const last = new Date(card.lastApplied || card.createdAt);
+    const now = new Date();
+    const days = daysBetween(last, now);
+    return Number(card.baseAmount) + days * DAILY_INCREMENT;
+  }
 
-      // Main UI Elements
-      const listEl = document.getElementById('list');
-      const loadingEl = document.getElementById('loading');
-      const addBtn = document.getElementById('addBtn');
-      const searchEl = document.getElementById('search');
-      const countEl = document.getElementById('count');
-      const applyDailyBtn = document.getElementById('applyDaily');
-      const exportBtn = document.getElementById('exportBtn');
-      const userIdDisplay = document.getElementById('userIdDisplay'); 
-
-      // Add Card Modal Elements
-      const modal = document.getElementById('modal');
-      const nameInput = document.getElementById('nameInput');
-      const amtInput = document.getElementById('amtInput');
-      const createBtn = document.getElementById('create');
-      const cancelBtn = document.getElementById('cancel');
-
-      // Generic Dialog Modal Elements 
-      const dialogModal = document.getElementById('dialogModal');
-      const dialogTitle = document.getElementById('dialogTitle');
-      const dialogMessage = document.getElementById('dialogMessage');
-      const dialogInputContainer = document.getElementById('dialogInputContainer');
-      const dialogInput = document.getElementById('dialogInput');
-      const dialogConfirm = document.getElementById('dialogConfirm');
-      const dialogCancel = document.getElementById('dialogCancel');
-
-      let currentDialogResolve = null;
-
-      // --- Helper Functions ---
-
-      function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
-      function daysBetween(a,b){ const ms=24*60*60*1000; return Math.floor((b - a)/ms); }
-      function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-
-      // --- Generic Dialog/Prompt Logic (Replaces alert/confirm/prompt) ---
-
-      function openDialog(){
-          dialogModal.style.display = 'flex';
-          return new Promise(resolve => {
-              currentDialogResolve = resolve;
-              if (dialogInputContainer.style.display !== 'none') {
-                  dialogInput.focus();
-              }
-          });
-      }
-
-      function closeDialog(){
-          dialogModal.style.display = 'none';
-          dialogInputContainer.style.display = 'none';
-          dialogInput.type = 'text';
-          dialogInput.value = '';
-          dialogInput.removeAttribute('min');
-          dialogInput.removeAttribute('step');
-      }
-
-      dialogCancel.addEventListener('click', () => {
-          if(currentDialogResolve) currentDialogResolve({ confirmed: false, input: null });
-          closeDialog();
-      });
-
-      dialogConfirm.addEventListener('click', () => {
-          const inputValue = dialogInputContainer.style.display !== 'none' ? Number(dialogInput.value) : null;
-          if(currentDialogResolve) currentDialogResolve({ confirmed: true, input: inputValue });
-          closeDialog();
-      });
-
-      function promptForNumber(title, message, inputLabel = 'Amount (Rs)', config = { min: 1, step: 1 }) {
-          dialogTitle.textContent = title;
-          dialogMessage.textContent = message;
-          dialogInputLabel.textContent = inputLabel;
-          dialogInputContainer.style.display = 'block';
-          dialogInput.type = 'number';
-          dialogConfirm.textContent = 'Add';
-          dialogCancel.textContent = 'Cancel';
-          dialogInput.value = ''; 
+  // --- render ---
+  const cardsEl = $('cards');
+  function render(){
+    let cards = load();
+    if(AUTO_APPLY_ON_LOAD){ cards = applyDailyIncrements(cards); }
+    const q = $('search').value.trim().toLowerCase();
+    const filtered = cards.filter(c=>c.name.toLowerCase().includes(q));
+    cardsEl.innerHTML = '';
+    if(filtered.length===0){ cardsEl.innerHTML = '<div style="grid-column:1/-1;color:#9fb7b0;padding:18px;border-radius:8px;background:rgba(255,255,255,0.02)">No cards found.</div>'; return }
+    filtered.sort((a,b)=>a.createdAt < b.createdAt ? 1 : -1);
+    filtered.forEach(c=>{
+      const el = document.createElement('div'); el.className='card';
+      el.innerHTML = `
+        <div class="top"><div>
+          <div style="font-weight:700">${escapeHtml(c.name)}</div>
+          <div class="muted small">Created: ${new Date(c.createdAt).toLocaleString()}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-weight:800;font-size:18px">Rs ${numberWithCommas(displayedAmount(c))}</div>
+          <div class="muted small">Base: Rs ${numberWithCommas(c.baseAmount)}</div>
+        </div></div>
+        <div class="muted small">ID: ${c.id}</div>
+        <div class="actions">
+          <button class="btn ghost" data-action="topup" data-id="${c.id}">Top-up</button>
           
-          if(config.min !== undefined) dialogInput.setAttribute('min', config.min);
-          if(config.step !== undefined) dialogInput.setAttribute('step', config.step);
-          
-          return openDialog().then(result => result.input);
-      }
-      
-      function confirmDialog(message) {
-          dialogTitle.textContent = 'Confirm Action';
-          dialogMessage.textContent = message;
-          dialogInputContainer.style.display = 'none';
-          dialogConfirm.textContent = 'Yes, Delete';
-          dialogCancel.textContent = 'Cancel';
-          dialogCancel.style.display = 'inline-flex';
-          return openDialog().then(result => result.confirmed);
-      }
+          <button class="btn ghost" data-action="delete" data-id="${c.id}">Delete</button>
+        </div>
+      `;
+      cardsEl.appendChild(el);
+    });
+  }
 
-      function showMessage(title, message) {
-          dialogTitle.textContent = title;
-          dialogMessage.textContent = message;
-          dialogInputContainer.style.display = 'none';
-          dialogCancel.style.display = 'none';
-          dialogConfirm.textContent = 'OK';
-          return openDialog().then(() => {
-              dialogCancel.style.display = 'inline-flex';
-          });
-      }
+  function numberWithCommas(x){return String(x).replace(/\B(?=(\d{3})+(?!\d))/g,",")}
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[ch] }); }
 
-      // --- Firebase Authentication and Data Sync ---
+  // --- events ---
+  $('addBtn').addEventListener('click', ()=>{ $('modalBackdrop').style.display='flex'; $('modalTitle').textContent='Create card'; $('name').value=''; $('amount').value=''; });
+  $('cancel').addEventListener('click', ()=>{$('modalBackdrop').style.display='none'});
+  $('save').addEventListener('click', ()=>{
+    if(prompt('Enter password')!=='yethula') return;
+    const name = $('name').value.trim(); const amount = Number($('amount').value) || 0;
+    if(!name){ alert('Please enter a name'); return }
+    const cards = load();
+    const card = { id:uid(), name, baseAmount:amount, createdAt: (new Date()).toISOString(), lastApplied: (new Date()).toISOString() };
+    cards.push(card); save(cards); $('modalBackdrop').style.display='none'; render();
+  });
 
-      async function signInAndSetupListener() {
-          // 1. Initial Sign-In attempt
-          try {
-              if (initialAuthToken) {
-                  await signInWithCustomToken(auth, initialAuthToken);
-              } else {
-                  await signInAnonymously(auth);
-              }
-          } catch (e) {
-              console.error("Firebase initial sign-in attempt failed:", e);
-          }
-          
-          // 2. Setup Auth State Listener (The primary way to get user status)
-          onAuthStateChanged(auth, (user) => {
-              if (user) {
-                  userId = user.uid;
-                  isAuthReady = true;
-                  // Display the User ID, which is the key for cloud sync
-                  userIdDisplay.textContent = `User ID: ${userId}`; 
-                  loadingEl.style.display = 'none';
-                  startRealtimeSync();
-              } else {
-                  userId = null;
-                  isAuthReady = true;
-                  // If sign-in failed or user signed out, show a status
-                  userIdDisplay.textContent = `User ID: Failed to authenticate.`; 
-                  loadingEl.textContent = 'Error: Failed to authenticate user. Cloud sync is not active.';
-              }
-          });
-      }
-      
-      function getCardsCollectionRef() {
-        if (!userId) {
-          console.error("User ID not available for collection reference.");
-          return null;
-        }
-        // Firestore Path for Private Data: /artifacts/{appId}/users/{userId}/cards
-        return collection(db, 'artifacts', appId, 'users', userId, 'cards');
-      }
+  cardsEl.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const act = btn.dataset.action;
+    if(prompt('Enter password')!=='yethula') return; const id = btn.dataset.id; let cards = load();
+    const idx = cards.findIndex(x=>x.id===id); if(idx===-1) return;
+    if(act==='delete'){
+      if(!confirm('Delete this card?')) return; cards.splice(idx,1); save(cards); render();
+    }else if(act==='topup'){
+      const v = prompt('Top-up amount (Rs)','100'); const inc = Number(v); if(!isNaN(inc) && inc>0){ cards[idx].baseAmount = Number(cards[idx].baseAmount) + inc; cards[idx].lastApplied = (new Date()).toISOString(); save(cards); render(); }
+    }
+  });
 
-      function startRealtimeSync() {
-          const cardsCollectionRef = getCardsCollectionRef();
-          if (!cardsCollectionRef) return;
+  $('search').addEventListener('input', ()=>render());
 
-          // Set up real-time listener
-          onSnapshot(query(cardsCollectionRef), (snapshot) => {
-              const today = startOfDay(new Date());
-              const newCards = [];
-              
-              snapshot.forEach(docSnapshot => {
-                  const data = docSnapshot.data();
-                  const c = { ...data, id: docSnapshot.id, amount: Number(data.amount) };
-                  const originalAmount = c.amount;
+  // Export JSON
+  $('exportBtn').addEventListener('click', ()=>{
+    const data = load(); const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='dragon_cards_export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
 
-                  // Apply daily increment logic
-                  if (!c.lastUpdated) c.lastUpdated = c.createdAt || new Date().toISOString();
-                  const last = new Date(c.lastUpdated);
-                  const d = daysBetween(startOfDay(last), today);
+  // Import JSON
+  $('importBtn').addEventListener('click', ()=>$('fileInput').click());
+  $('fileInput').addEventListener('change', (e)=>{
+    const f = e.target.files[0]; if(!f) return; const reader = new FileReader();
+    reader.onload = ()=>{ try{ const parsed = JSON.parse(reader.result); if(!Array.isArray(parsed)){ alert('Invalid file') ; return } localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); alert('Imported ' + parsed.length + ' cards.'); render(); }catch(err){alert('Import failed: '+err.message)} };
+    reader.readAsText(f);
+  });
 
-                  if (d > 0) {
-                      c.amount = originalAmount + d * 10;
-                      c.lastUpdated = today.toISOString();
-                      
-                      // Update the document in Firestore asynchronously to save the new amount
-                      updateDoc(doc(cardsCollectionRef, c.id), {
-                          amount: c.amount,
-                          lastUpdated: c.lastUpdated
-                      }).catch(e => console.error("Error updating daily increment:", e));
-                  }
-                  newCards.push(c);
-              });
-              
-              cards = newCards;
-              // Sort by creation date (newest first)
-              cards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-              render();
-          }, (error) => {
-              console.error("Firestore snapshot error:", error);
-              loadingEl.textContent = 'Error loading cards: Check console for details.';
-          });
-      }
+  // Share code: compressed base64 of data to copy to clipboard
+  $('shareBtn').addEventListener('click', async ()=>{
+    const data = load(); const json = JSON.stringify(data);
+    try{ const encoded = btoa(unescape(encodeURIComponent(json))); await navigator.clipboard.writeText(encoded); alert('Share code copied to clipboard. Paste on another device into Import → Paste code field.'); prompt('Share code (copy and send to other device)', encoded); }catch(e){ // fallback
+      const encoded = btoa(unescape(encodeURIComponent(json))); prompt('Share code (copy and send)', encoded);
+    }
+  });
 
-      // --- Rendering and Event Handlers ---
+  // Also provide a paste-import prompt when page opens with a query param like ?paste=1
+  // provide a keyboard shortcut: Ctrl+I to paste/import
+  window.addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='i'){ e.preventDefault(); const ip = prompt('Paste share code from other device'); if(!ip) return; try{ const dec = decodeURIComponent(escape(atob(ip))); const parsed = JSON.parse(dec); if(Array.isArray(parsed)){ localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); alert('Imported '+parsed.length+' cards'); render(); } else alert('Invalid code'); }catch(err){ alert('Import failed: '+err.message) } } });
 
-      function render(){
-        const q = searchEl.value.trim().toLowerCase();
-        const filtered = cards.filter(c => c.name.toLowerCase().includes(q));
-        listEl.innerHTML = '';
-        if(filtered.length === 0){
-          listEl.innerHTML = '<div class="muted" style="padding:18px;background:white;border-radius:12px;box-shadow: 0 1px 4px rgba(2,6,23,0.06);text-align:center;">No cards found. Start by adding a new card!</div>';
-        }else{
-          filtered.forEach(c => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.innerHTML = `
-              <div>
-                <div style="font-weight:600">${escapeHtml(c.name)}</div>
-                <div class="amt">Rs ${Number(c.amount).toFixed(2)}</div>
-                <div class="muted" style="margin-top:6px;font-size:12px">Last Updated: ${new Date(c.lastUpdated).toLocaleDateString()}</div>
-              </div>
-              <div style="display:flex;gap:8px;align-items:center">
-                <button class="small-btn top-up" data-id="${c.id}" title="Top-up">＋</button>
-                <button class="small-btn delete" data-id="${c.id}" title="Delete">🗑</button>
-              </div>
-            `;
-            listEl.appendChild(div);
-          });
-        }
-        countEl.textContent = `${cards.length} card${cards.length!==1? 's':''}`;
-        attachCardHandlers();
-      }
-
-      function attachCardHandlers(){
-        // Top-up Button Handler
-        document.querySelectorAll('.top-up').forEach(btn=>{
-          btn.onclick = async ()=> {
-            if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
-
-            const id = btn.getAttribute('data-id');
-            const inputAmount = await promptForNumber(
-                'Top-up Card', 
-                'Enter the amount (Rs) to add to this card.', 
-                'Amount (Rs)', 
-                { min: 1, step: 1 }
-            ); 
-
-            const n = Number(inputAmount);
-            
-            if(inputAmount === null || Number.isNaN(n) || n <= 0){ 
-                if (inputAmount !== null) showMessage('Error', 'Please enter a valid positive number.');
-                return; 
-            }
-            
-            const card = cards.find(c => c.id === id);
-            if(card) {
-                const newAmount = card.amount + n;
-                // Update Firestore
-                await updateDoc(doc(getCardsCollectionRef(), id), {
-                    amount: newAmount,
-                    lastUpdated: new Date().toISOString()
-                }).catch(e => console.error("Update failed:", e));
-            }
-          }
-        });
-        
-        // Delete Button Handler
-        document.querySelectorAll('.delete').forEach(btn=>{
-          btn.onclick = async ()=> {
-            if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
-
-            const id = btn.getAttribute('data-id');
-            const card = cards.find(c => c.id === id);
-
-            const isConfirmed = await confirmDialog(`Are you sure you want to delete card: ${card.name}?`); 
-            if(!isConfirmed) return;
-            
-            // Delete from Firestore
-            await deleteDoc(doc(getCardsCollectionRef(), id)).catch(e => console.error("Delete failed:", e));
-          }
-        });
-      }
-
-      function openModal(){ modal.style.display = 'flex'; nameInput.focus(); }
-      function closeModal(){ modal.style.display = 'none'; nameInput.value=''; amtInput.value=''; }
-
-      // Add Card Button Listener 
-      addBtn.addEventListener('click', function() {
-        if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
-        openModal();
-      });
-      
-      cancelBtn.addEventListener('click', closeModal);
-
-      // Create Card Button Listener
-      createBtn.addEventListener('click', async function(){
-        if (!isAuthReady || !userId) return showMessage('Error', 'Cannot create card: Cloud sync is not active.');
-
-        const name = nameInput.value.trim();
-        const amount = Number(amtInput.value) || 0;
-        if(!name){ 
-          showMessage('Error', 'Please enter a name.'); 
-          return; 
-        }
-        
-        const now = new Date().toISOString();
-        const newCardData = { name, amount, createdAt: now, lastUpdated: now };
-
-        // Add to Firestore
-        try {
-            await addDoc(getCardsCollectionRef(), newCardData);
-            closeModal();
-        } catch (e) {
-            console.error("Failed to add document:", e);
-            showMessage('Error', 'Failed to create card. See console for details.');
-        }
-      });
-
-      searchEl.addEventListener('input', render);
-
-      // Apply Daily Listener 
-      applyDailyBtn.addEventListener('click', function(){
-        if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
-        
-        // This explicitly triggers the daily update logic which is handled inside startRealtimeSync's onSnapshot.
-        cards.forEach(async c => {
-            const today = startOfDay(new Date());
-            const last = new Date(c.lastUpdated);
-            const d = daysBetween(startOfDay(last), today);
-
-            if (d > 0) {
-                const newAmount = Number(c.amount) + d * 10;
-                await updateDoc(doc(getCardsCollectionRef(), c.id), {
-                    amount: newAmount,
-                    lastUpdated: today.toISOString()
-                }).catch(e => console.error("Manual Daily Update failed:", e));
-            }
-        });
-        showMessage('Confirmation', 'Applied daily Rs10 increments where applicable. Changes will sync shortly.');
-      });
-
-      exportBtn.addEventListener('click', function(){
-        const data = JSON.stringify(cards, null, 2);
-        const blob = new Blob([data], {type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'dragon_cards_cloud_backup.json';
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-      
-      // Initialize Firebase Auth and start data sync
-      signInAndSetupListener();
-
-      // close modal if click outside
-      modal.addEventListener('click', function(e){
-        if(e.target === modal) closeModal();
-      });
-      
-      // close dialog if click outside
-      dialogModal.addEventListener('click', function(e){
-        if(e.target === dialogModal) closeDialog();
-      });
-
-    })();
-  </script>
+  // on load
+  render();
+})();
+</script>
 </body>
 </html>

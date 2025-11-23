@@ -1,30 +1,239 @@
 <!doctype html>
 <html lang="si">
 <head>
+  <meta name="google-site-verification" content="AioHky6gBYFTKoXFnESEp7ri323X5lvvZAtSQ48WSLM" />
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dragon Bank — Cards (Standalone)</title>
+  <title>Dragon Bank — Cards (Cloud Sync - Multi-Device)</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans',sans-serif;background:#f8fafc;color:#0f172a;margin:0;padding:20px}
-    .container{max-width:900px;margin:0 auto}
-    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-    .search{padding:8px;border:1px solid #cbd5e1;border-radius:6px;width:220px}
-    .btn{background:#0ea5e9;color:white;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .btn-muted{background:#fff;border:1px solid #cbd5e1;color:#0f172a}
-    .card{background:white;border-radius:10px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 4px rgba(2,6,23,0.06)}
-    .card .meta{font-size:14px}
-    .card .amt{font-weight:700;margin-top:6px}
-    .small-btn{width:36px;height:36px;border-radius:999px;border:1px solid #cbd5e1;background:#fff;cursor:pointer}
-    .top-row{display:flex;gap:8px;align-items:center}
-    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center}
-    .modal{background:white;padding:16px;border-radius:8px;width:320px}
-    label{display:block;margin-top:8px;font-size:13px}
-    input[type="text"], input[type="number"]{width:100%;padding:8px;border-radius:6px;border:1px solid #cbd5e1;margin-top:6px}
-    .muted{color:#64748b;font-size:13px}
-    .flex{display:flex}
-    .gap-2{gap:8px}
-    .right{justify-content:flex-end}
-    footer{margin-top:18px;color:#64748b;font-size:13px}
+    /* ------------------------------------------- */
+    /* DECORATED STYLES FOR DRAGON BANK */
+    /* ------------------------------------------- */
+    :root {
+      --primary-blue: #0ea5e9; /* Sky Blue */
+      --secondary-dark: #1e293b; /* Slate 800 */
+      --light-bg: #f0f4f8; /* Light background for contrast */
+      --card-shadow: 0 4px 12px rgba(14, 165, 233, 0.15), 0 2px 4px rgba(0,0,0,0.05); /* Blue-tinted shadow */
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Noto Sans', sans-serif;
+      background-color: var(--light-bg); 
+      color: var(--secondary-dark);
+      margin: 0;
+      padding: 30px 20px;
+    }
+    
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px; 
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary-blue);
+      margin: 0;
+    }
+    
+    .search {
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px; 
+      width: 250px;
+      transition: all 0.2s;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .search:focus {
+        border-color: var(--primary-blue);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+    }
+    
+    /* --- BUTTON STYLES --- */
+    .btn {
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: 0 4px 6px rgba(14, 165, 233, 0.3), 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .btn:hover {
+      background: #0c8cdb;
+      box-shadow: 0 6px 8px rgba(14, 165, 233, 0.4), 0 2px 4px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+    }
+    
+    .btn-muted {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      color: var(--secondary-dark);
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .btn-muted:hover {
+      background: #f1f5f9;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* --- CARD STYLES --- */
+    .card {
+      background: linear-gradient(145deg, #ffffff, #f7f9fc); 
+      border-radius: 12px; 
+      padding: 18px 24px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--card-shadow); 
+      border: 1px solid #eef2f6;
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2), 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .card .meta {
+      font-size: 14px;
+    }
+    .card .amt {
+      font-weight: 800; 
+      font-size: 1.6rem;
+      color: var(--primary-blue);
+      margin-top: 4px;
+      letter-spacing: -0.5px;
+    }
+    
+    .small-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      line-height: 1;
+      color: #64748b;
+    }
+    .small-btn:hover {
+      background: var(--primary-blue);
+      color: white;
+      border-color: var(--primary-blue);
+      transform: scale(1.05);
+    }
+
+    /* Input and Modal styles */
+    .modal-back {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6); 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      backdrop-filter: blur(3px); 
+    }
+    .modal {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      width: 360px; 
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    }
+    
+    input[type="text"], input[type="number"], input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        margin-top: 6px;
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        outline: none;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, input[type="password"]:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 1px var(--primary-blue);
+    }
+    
+    label {
+        display: block;
+        margin-top: 12px; 
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--secondary-dark);
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 14px;
+    }
+    
+    /* Utility & Footer adjustments */
+    .top-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    footer {
+      margin-top: 30px;
+      color: #94a3b8;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* Small screen adjustments for responsiveness */
+    @media (max-width: 600px) {
+        header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .top-row {
+            width: 100%;
+            justify-content: space-between;
+        }
+        .search {
+            flex-grow: 1; 
+            width: auto;
+        }
+        .card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px; 
+            padding: 15px;
+        }
+        .card .amt {
+            font-size: 1.4rem;
+        }
+        .modal {
+            width: 90%;
+            max-width: 360px;
+        }
+    }
+
   </style>
 </head>
 <body>
@@ -32,7 +241,8 @@
     <header>
       <div>
         <h1 style="margin:0">Dragon Bank — Cards</h1>
-        <div class="muted">Saved in your browser (localStorage)</div>
+        <div class="muted">Cloud Storage (බහුවිධ උපාංග සමමුහුර්තකරණය)</div>
+        <div class="muted" id="userIdDisplay" style="font-size:10px; margin-top: 5px;">User ID: Connecting...</div>
       </div>
       <div class="top-row">
         <input id="search" class="search" placeholder="Search cards..." />
@@ -49,75 +259,286 @@
     </div>
 
     <main id="list"></main>
+    <div id="loading" class="muted" style="text-align:center; padding: 20px;">Loading cards...</div>
 
     <footer>Note: Daily Rs10 additions are computed when you open the site (based on last update date).</footer>
   </div>
 
-  <!-- Modal (hidden initially) -->
+  <!-- Modal for Adding New Card -->
   <div id="modal" style="display:none" class="modal-back">
     <div class="modal">
-      <h3 style="margin:0 0 6px 0">Add new card</h3>
-      <label>Name</label>
+      <h3 style="margin:0 0 12px 0">Add New Card</h3>
+      <label style="margin-top:0;">Name</label>
       <input id="nameInput" type="text" />
       <label>Initial Amount (Rs)</label>
       <input id="amtInput" type="number" min="0" />
-      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">
         <button id="cancel" class="btn-muted">Cancel</button>
         <button id="create" class="btn">Create</button>
       </div>
     </div>
   </div>
 
-  <script>
-    (function(){
-      const STORAGE_KEY = 'dragon_bank_cards_v1';
+  <!-- Generic Dialog Modal (for confirmation and simple alerts) -->
+  <div id="dialogModal" style="display:none" class="modal-back">
+    <div class="modal" style="width:360px">
+      <h3 id="dialogTitle" style="margin:0 0 6px 0">Alert</h3>
+      <div id="dialogMessage" style="margin-bottom:12px; font-size: 15px;"></div>
+      <div id="dialogInputContainer" style="display:none">
+          <label id="dialogInputLabel" class="muted" style="margin-top:0;">Enter</label>
+          <input id="dialogInput" type="number" /> 
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button id="dialogCancel" class="btn-muted">Cancel</button>
+        <button id="dialogConfirm" class="btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    setLogLevel('Debug'); // Enable debug logging for Firestore
+
+    (async function(){
+      
+      // --- START: Firebase Configuration Setup (Uses Canvas environment variables) ---
+      
+      // If the dynamic variables are not defined, use placeholders (though they should be provided by Canvas)
+      const placeholderConfig = {
+          apiKey: "AIzaSy_Placeholder_Key_12345",
+          authDomain: "placeholder-app.firebaseapp.com",
+          projectId: "placeholder-app",
+          storageBucket: "placeholder-app.firebasestorage.app",
+          messagingSenderId: "1234567890",
+          appId: "1:1234567890:web:abcdefg"
+      };
+
+      // 1. Determine Firebase Config: Use Canvas injection first, falling back to placeholder
+      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : placeholderConfig;
+      
+      // 2. Determine App ID (Crucial for Firestore path): Use Canvas injection first, then the projectId from the config.
+      const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId || 'default-app-id'; 
+      
+      // 3. Determine Auth Token: Use Canvas injection.
+      const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+      
+      // --- END: Firebase Configuration Setup ---
+
+      // Initialize Firebase
+      let app, db, auth;
+      try {
+          app = initializeApp(firebaseConfig);
+          db = getFirestore(app);
+          auth = getAuth(app);
+      } catch (e) {
+          console.error("Firebase initialization failed:", e);
+          document.getElementById('loading').textContent = 'Error: Failed to initialize Firebase. Check console.';
+          return;
+      }
+
+      let userId = null;
+      let isAuthReady = false;
+      let cards = [];
+
+      // Main UI Elements
       const listEl = document.getElementById('list');
+      const loadingEl = document.getElementById('loading');
       const addBtn = document.getElementById('addBtn');
+      const searchEl = document.getElementById('search');
+      const countEl = document.getElementById('count');
+      const applyDailyBtn = document.getElementById('applyDaily');
+      const exportBtn = document.getElementById('exportBtn');
+      const userIdDisplay = document.getElementById('userIdDisplay'); 
+
+      // Add Card Modal Elements
       const modal = document.getElementById('modal');
       const nameInput = document.getElementById('nameInput');
       const amtInput = document.getElementById('amtInput');
       const createBtn = document.getElementById('create');
       const cancelBtn = document.getElementById('cancel');
-      const searchEl = document.getElementById('search');
-      const countEl = document.getElementById('count');
-      const applyDailyBtn = document.getElementById('applyDaily');
-      const exportBtn = document.getElementById('exportBtn');
+
+      // Generic Dialog Modal Elements 
+      const dialogModal = document.getElementById('dialogModal');
+      const dialogTitle = document.getElementById('dialogTitle');
+      const dialogMessage = document.getElementById('dialogMessage');
+      const dialogInputContainer = document.getElementById('dialogInputContainer');
+      const dialogInput = document.getElementById('dialogInput');
+      const dialogConfirm = document.getElementById('dialogConfirm');
+      const dialogCancel = document.getElementById('dialogCancel');
+
+      let currentDialogResolve = null;
+
+      // --- Helper Functions ---
 
       function startOfDay(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
       function daysBetween(a,b){ const ms=24*60*60*1000; return Math.floor((b - a)/ms); }
+      function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
 
-      let cards = [];
+      // --- Generic Dialog/Prompt Logic (Replaces alert/confirm/prompt) ---
 
-      function load(){
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const today = startOfDay(new Date());
-        if(raw){
-          try{
-            const parsed = JSON.parse(raw);
-            cards = parsed.map(c=>{
-              if(!c.lastUpdated) c.lastUpdated = c.createdAt || new Date().toISOString();
-              const last = new Date(c.lastUpdated);
-              const d = daysBetween(startOfDay(last), today);
-              if(d > 0){
-                return {...c, amount: Number(c.amount) + d*10, lastUpdated: today.toISOString()};
+      function openDialog(){
+          dialogModal.style.display = 'flex';
+          return new Promise(resolve => {
+              currentDialogResolve = resolve;
+              if (dialogInputContainer.style.display !== 'none') {
+                  dialogInput.focus();
               }
-              return c;
-            });
-            save(); // persist any changes from daily applying
-          }catch(e){ cards = []; }
-        }else{
-          cards = [];
-        }
+          });
       }
 
-      function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); }
+      function closeDialog(){
+          dialogModal.style.display = 'none';
+          dialogInputContainer.style.display = 'none';
+          dialogInput.type = 'text';
+          dialogInput.value = '';
+          dialogInput.removeAttribute('min');
+          dialogInput.removeAttribute('step');
+      }
+
+      dialogCancel.addEventListener('click', () => {
+          if(currentDialogResolve) currentDialogResolve({ confirmed: false, input: null });
+          closeDialog();
+      });
+
+      dialogConfirm.addEventListener('click', () => {
+          const inputValue = dialogInputContainer.style.display !== 'none' ? Number(dialogInput.value) : null;
+          if(currentDialogResolve) currentDialogResolve({ confirmed: true, input: inputValue });
+          closeDialog();
+      });
+
+      function promptForNumber(title, message, inputLabel = 'Amount (Rs)', config = { min: 1, step: 1 }) {
+          dialogTitle.textContent = title;
+          dialogMessage.textContent = message;
+          dialogInputLabel.textContent = inputLabel;
+          dialogInputContainer.style.display = 'block';
+          dialogInput.type = 'number';
+          dialogConfirm.textContent = 'Add';
+          dialogCancel.textContent = 'Cancel';
+          dialogInput.value = ''; 
+          
+          if(config.min !== undefined) dialogInput.setAttribute('min', config.min);
+          if(config.step !== undefined) dialogInput.setAttribute('step', config.step);
+          
+          return openDialog().then(result => result.input);
+      }
+      
+      function confirmDialog(message) {
+          dialogTitle.textContent = 'Confirm Action';
+          dialogMessage.textContent = message;
+          dialogInputContainer.style.display = 'none';
+          dialogConfirm.textContent = 'Yes, Delete';
+          dialogCancel.textContent = 'Cancel';
+          dialogCancel.style.display = 'inline-flex';
+          return openDialog().then(result => result.confirmed);
+      }
+
+      function showMessage(title, message) {
+          dialogTitle.textContent = title;
+          dialogMessage.textContent = message;
+          dialogInputContainer.style.display = 'none';
+          dialogCancel.style.display = 'none';
+          dialogConfirm.textContent = 'OK';
+          return openDialog().then(() => {
+              dialogCancel.style.display = 'inline-flex';
+          });
+      }
+
+      // --- Firebase Authentication and Data Sync ---
+
+      async function signInAndSetupListener() {
+          // 1. Initial Sign-In attempt
+          try {
+              if (initialAuthToken) {
+                  await signInWithCustomToken(auth, initialAuthToken);
+              } else {
+                  await signInAnonymously(auth);
+              }
+          } catch (e) {
+              console.error("Firebase initial sign-in attempt failed:", e);
+          }
+          
+          // 2. Setup Auth State Listener (The primary way to get user status)
+          onAuthStateChanged(auth, (user) => {
+              if (user) {
+                  userId = user.uid;
+                  isAuthReady = true;
+                  // Display the User ID, which is the key for cloud sync
+                  userIdDisplay.textContent = `User ID: ${userId}`; 
+                  loadingEl.style.display = 'none';
+                  startRealtimeSync();
+              } else {
+                  userId = null;
+                  isAuthReady = true;
+                  // If sign-in failed or user signed out, show a status
+                  userIdDisplay.textContent = `User ID: Failed to authenticate.`; 
+                  loadingEl.textContent = 'Error: Failed to authenticate user. Cloud sync is not active.';
+              }
+          });
+      }
+      
+      function getCardsCollectionRef() {
+        if (!userId) {
+          console.error("User ID not available for collection reference.");
+          return null;
+        }
+        // Firestore Path for Private Data: /artifacts/{appId}/users/{userId}/cards
+        return collection(db, 'artifacts', appId, 'users', userId, 'cards');
+      }
+
+      function startRealtimeSync() {
+          const cardsCollectionRef = getCardsCollectionRef();
+          if (!cardsCollectionRef) return;
+
+          // Set up real-time listener
+          onSnapshot(query(cardsCollectionRef), (snapshot) => {
+              const today = startOfDay(new Date());
+              const newCards = [];
+              
+              snapshot.forEach(docSnapshot => {
+                  const data = docSnapshot.data();
+                  const c = { ...data, id: docSnapshot.id, amount: Number(data.amount) };
+                  const originalAmount = c.amount;
+
+                  // Apply daily increment logic
+                  if (!c.lastUpdated) c.lastUpdated = c.createdAt || new Date().toISOString();
+                  const last = new Date(c.lastUpdated);
+                  const d = daysBetween(startOfDay(last), today);
+
+                  if (d > 0) {
+                      c.amount = originalAmount + d * 10;
+                      c.lastUpdated = today.toISOString();
+                      
+                      // Update the document in Firestore asynchronously to save the new amount
+                      updateDoc(doc(cardsCollectionRef, c.id), {
+                          amount: c.amount,
+                          lastUpdated: c.lastUpdated
+                      }).catch(e => console.error("Error updating daily increment:", e));
+                  }
+                  newCards.push(c);
+              });
+              
+              cards = newCards;
+              // Sort by creation date (newest first)
+              cards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+              render();
+          }, (error) => {
+              console.error("Firestore snapshot error:", error);
+              loadingEl.textContent = 'Error loading cards: Check console for details.';
+          });
+      }
+
+      // --- Rendering and Event Handlers ---
 
       function render(){
         const q = searchEl.value.trim().toLowerCase();
         const filtered = cards.filter(c => c.name.toLowerCase().includes(q));
         listEl.innerHTML = '';
         if(filtered.length === 0){
-          listEl.innerHTML = '<div class="muted" style="padding:12px;background:#fff;border-radius:8px">No cards found.</div>';
+          listEl.innerHTML = '<div class="muted" style="padding:18px;background:white;border-radius:12px;box-shadow: 0 1px 4px rgba(2,6,23,0.06);text-align:center;">No cards found. Start by adding a new card!</div>';
         }else{
           filtered.forEach(c => {
             const div = document.createElement('div');
@@ -125,8 +546,8 @@
             div.innerHTML = `
               <div>
                 <div style="font-weight:600">${escapeHtml(c.name)}</div>
-                <div class="amt">Rs ${Number(c.amount)}</div>
-                <div class="muted" style="margin-top:6px;font-size:12px">Last updated: ${new Date(c.lastUpdated).toLocaleDateString()}</div>
+                <div class="amt">Rs ${Number(c.amount).toFixed(2)}</div>
+                <div class="muted" style="margin-top:6px;font-size:12px">Last Updated: ${new Date(c.lastUpdated).toLocaleDateString()}</div>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <button class="small-btn top-up" data-id="${c.id}" title="Top-up">＋</button>
@@ -141,23 +562,51 @@
       }
 
       function attachCardHandlers(){
+        // Top-up Button Handler
         document.querySelectorAll('.top-up').forEach(btn=>{
-          btn.onclick = ()=> {
+          btn.onclick = async ()=> {
+            if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
+
             const id = btn.getAttribute('data-id');
-            const input = prompt('Top-up amount (Rs):');
-            if(input === null) return;
-            const n = Number(input);
-            if(Number.isNaN(n)){ alert('Valid number ekak danna.'); return; }
-            cards = cards.map(c => c.id === id ? {...c, amount: Number(c.amount) + n, lastUpdated: new Date().toISOString()} : c);
-            save(); render();
+            const inputAmount = await promptForNumber(
+                'Top-up Card', 
+                'Enter the amount (Rs) to add to this card.', 
+                'Amount (Rs)', 
+                { min: 1, step: 1 }
+            ); 
+
+            const n = Number(inputAmount);
+            
+            if(inputAmount === null || Number.isNaN(n) || n <= 0){ 
+                if (inputAmount !== null) showMessage('Error', 'Please enter a valid positive number.');
+                return; 
+            }
+            
+            const card = cards.find(c => c.id === id);
+            if(card) {
+                const newAmount = card.amount + n;
+                // Update Firestore
+                await updateDoc(doc(getCardsCollectionRef(), id), {
+                    amount: newAmount,
+                    lastUpdated: new Date().toISOString()
+                }).catch(e => console.error("Update failed:", e));
+            }
           }
         });
+        
+        // Delete Button Handler
         document.querySelectorAll('.delete').forEach(btn=>{
-          btn.onclick = ()=> {
+          btn.onclick = async ()=> {
+            if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
+
             const id = btn.getAttribute('data-id');
-            if(!confirm('Delete karanna kiyala sureda?')) return;
-            cards = cards.filter(c => c.id !== id);
-            save(); render();
+            const card = cards.find(c => c.id === id);
+
+            const isConfirmed = await confirmDialog(`Are you sure you want to delete card: ${card.name}?`); 
+            if(!isConfirmed) return;
+            
+            // Delete from Firestore
+            await deleteDoc(doc(getCardsCollectionRef(), id)).catch(e => console.error("Delete failed:", e));
           }
         });
       }
@@ -165,35 +614,59 @@
       function openModal(){ modal.style.display = 'flex'; nameInput.focus(); }
       function closeModal(){ modal.style.display = 'none'; nameInput.value=''; amtInput.value=''; }
 
-      addBtn.addEventListener('click', openModal);
+      // Add Card Button Listener 
+      addBtn.addEventListener('click', function() {
+        if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
+        openModal();
+      });
+      
       cancelBtn.addEventListener('click', closeModal);
 
-      createBtn.addEventListener('click', function(){
+      // Create Card Button Listener
+      createBtn.addEventListener('click', async function(){
+        if (!isAuthReady || !userId) return showMessage('Error', 'Cannot create card: Cloud sync is not active.');
+
         const name = nameInput.value.trim();
         const amount = Number(amtInput.value) || 0;
-        if(!name){ alert('Name ekak danna.'); return; }
+        if(!name){ 
+          showMessage('Error', 'Please enter a name.'); 
+          return; 
+        }
+        
         const now = new Date().toISOString();
-        const card = { id: String(Date.now()) + Math.random().toString(36).slice(2,8), name, amount, createdAt: now, lastUpdated: now };
-        cards.unshift(card);
-        save();
-        render();
-        closeModal();
+        const newCardData = { name, amount, createdAt: now, lastUpdated: now };
+
+        // Add to Firestore
+        try {
+            await addDoc(getCardsCollectionRef(), newCardData);
+            closeModal();
+        } catch (e) {
+            console.error("Failed to add document:", e);
+            showMessage('Error', 'Failed to create card. See console for details.');
+        }
       });
 
       searchEl.addEventListener('input', render);
 
+      // Apply Daily Listener 
       applyDailyBtn.addEventListener('click', function(){
-        const today = startOfDay(new Date());
-        cards = cards.map(c => {
-          const last = new Date(c.lastUpdated || c.createdAt || new Date());
-          const d = daysBetween(startOfDay(last), today);
-          if(d > 0){
-            return {...c, amount: Number(c.amount) + d*10, lastUpdated: today.toISOString()};
-          }
-          return c;
+        if (!isAuthReady || !userId) return showMessage('Wait', 'Cloud sync is not active. Please wait or check connection.');
+        
+        // This explicitly triggers the daily update logic which is handled inside startRealtimeSync's onSnapshot.
+        cards.forEach(async c => {
+            const today = startOfDay(new Date());
+            const last = new Date(c.lastUpdated);
+            const d = daysBetween(startOfDay(last), today);
+
+            if (d > 0) {
+                const newAmount = Number(c.amount) + d * 10;
+                await updateDoc(doc(getCardsCollectionRef(), c.id), {
+                    amount: newAmount,
+                    lastUpdated: today.toISOString()
+                }).catch(e => console.error("Manual Daily Update failed:", e));
+            }
         });
-        save(); render();
-        alert('Applied daily Rs10 increments where applicable.');
+        showMessage('Confirmation', 'Applied daily Rs10 increments where applicable. Changes will sync shortly.');
       });
 
       exportBtn.addEventListener('click', function(){
@@ -202,21 +675,22 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'dragon_cards.json';
+        a.download = 'dragon_cards_cloud_backup.json';
         a.click();
         URL.revokeObjectURL(url);
       });
-
-      // small helper to escape html
-      function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-
-      // initial load
-      load();
-      render();
+      
+      // Initialize Firebase Auth and start data sync
+      signInAndSetupListener();
 
       // close modal if click outside
       modal.addEventListener('click', function(e){
         if(e.target === modal) closeModal();
+      });
+      
+      // close dialog if click outside
+      dialogModal.addEventListener('click', function(e){
+        if(e.target === dialogModal) closeDialog();
       });
 
     })();

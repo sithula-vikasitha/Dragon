@@ -1,284 +1,581 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="AioHky6gBYFTKoXFnESEp7ri323X5lvvZAtSQ48WSLM" />
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dragon — Cards</title>
-  <style>
-    :root{--bg:rgba(255,255,255,0.9);--accent:#0b74de;--card:#ffffff;--muted:#666}
-    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    body{background:#111;color:#111}
-    /* background video fullbleed */
-    .bg-video{position:fixed;inset:0;z-index:-2;object-fit:cover;width:100%;height:100%;opacity:0.28}
-    .overlay{position:fixed;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.05));z-index:-1}
+	<meta name="google-site-verification" content="AioHky6gBYFTKoXFnESEp7ri323X5lvvZAtSQ48WSLM" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            overflow: hidden; /* Hide scrollbar for video */
+        }
+        #background-video {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            background-size: cover;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for better text readability */
+            z-index: 0;
+            overflow-y: auto; /* Allow scrolling for content */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-bottom: 1px solid #333;
+        }
+        .header .logo {
+            display: flex;
+            align-items: center;
+        }
+        .header .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .header .logo h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #4CAF50;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .controls input[type="text"] {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #333;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .main-content {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .card h3 {
+            margin-top: 0;
+            color: #4CAF50;
+            font-size: 22px;
+        }
+        .card p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+        .card .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFD700; /* Gold color for amount */
+        }
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .card-actions .delete-button {
+            background-color: #f44336;
+        }
+        .card-actions .delete-button:hover {
+            background-color: #da190b;
+        }
+        .add-card-modal, .password-modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #222;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+        .modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: #fff;
+            font-size: 16px;
+        }
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="number"]:focus,
+        .modal-content input[type="password"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #importExportModal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        #importExportModal .modal-content {
+            max-width: 600px;
+        }
+        #importExportModal textarea {
+            width: calc(100% - 20px);
+            height: 150px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+        }
 
-    header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(4px)}
-    header img.logo{height:44px;width:44px;border-radius:8px;object-fit:cover}
-    header .title{font-weight:700;font-size:18px}
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .header .logo h1 {
+                font-size: 24px;
+            }
+            .controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            .controls input[type="text"] {
+                width: calc(100% - 20px);
+            }
+            .button {
+                width: 100%;
+            }
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .container{max-width:1100px;margin:18px auto;padding:0 16px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-    .btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:var(--bg);cursor:pointer}
-    .btn.primary{background:var(--accent);color:#fff;border:none}
-    .search{flex:1;min-width:180px}
-    input[type=text],input[type=number],textarea{padding:8px;border-radius:8px;border:1px solid #ddd;width:100%;box-sizing:border-box}
-
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-    .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 20px rgba(4,4,4,0.06);display:flex;flex-direction:column;gap:8px}
-    .card .head{display:flex;align-items:center;justify-content:space-between}
-    .card .name{font-weight:700}
-    .muted{color:var(--muted);font-size:13px}
-    .amount{font-size:20px;font-weight:700}
-    .card .actions{display:flex;gap:6px}
-
-    .footer{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
-
-    @media (max-width:520px){header .title{font-size:16px}}
-
-    /* modal */
-    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center}
-    .modal{background:#fff;padding:16px;border-radius:10px;max-width:420px;width:94%;box-sizing:border-box}
-    .row{display:flex;gap:8px}
-    .small{font-size:13px;color:var(--muted)}
-    pre.codebox{background:#f6f6f6;padding:12px;border-radius:8px;max-height:240px;overflow:auto}
-
-  </style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <!-- background video (file provided by user as background.mp4) -->
-  <video class="bg-video" autoplay muted loop playsinline>
-    <source src="background.mp4" type="video/mp4">
-  </video>
-  <div class="overlay"></div>
+    <video autoplay muted loop id="background-video">
+        <source src="background.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
 
-  <header>
-    <img src="logo.jpg" class="logo" alt="logo">
-    <div>
-      <div class="title">Dragon — Cards</div>
-      <div class="small">Simple card manager</div>
-    </div>
-  </header>
-
-  <main class="container">
-    <div class="controls">
-      <button id="btnAdd" class="btn primary">＋ Add</button>
-      <input id="search" class="search" type="text" placeholder="Search cards by name or note...">
-
-      <button id="btnExport" class="btn">Export</button>
-      <button id="btnImport" class="btn">Import</button>
-      <button id="btnPdf" class="btn">PDF</button>
-    </div>
-
-    <div id="grid" class="grid" aria-live="polite"></div>
-
-    <div class="footer small muted">Note: Data is stored locally on this device (no external servers). Use Export/Import to move data between devices.</div>
-  </main>
-
-  <!-- modal containers -->
-  <div id="modal" class="modal-back">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div id="modalContent"></div>
-      <div style="text-align:right;margin-top:8px"><button id="modalClose" class="btn">Close</button></div>
-    </div>
-  </div>
-
-  <script>
-    // Single-file app. No server. No mention of the disallowed word anywhere in markup.
-    const STORAGE_KEY = 'dragon_cards_v1';
-    const ACTION_PW = 'yethula'; // the password required for sensitive actions
-
-    // helpers
-    const $ = sel => document.querySelector(sel);
-    const grid = $('#grid');
-    const searchInput = $('#search');
-
-    function uid(){return 'id'+Math.random().toString(36).slice(2,9)}
-
-    function now(){return Date.now()}
-
-    function load(){
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if(!raw) return []
-      try{return JSON.parse(raw)}catch(e){console.error('parse',e);return []}
-    }
-    function save(data){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)) }
-
-    // daily auto-add: if lastUpdated older than today, add Rs10 per day elapsed
-    function applyDailyIncrease(card){
-      const last = card.lastUpdated || card.createdAt || now();
-      const days = Math.floor((now() - last)/86400000);
-      if(days > 0){
-        card.amount = Number(card.amount) + 10*days;
-        card.lastUpdated = now();
-      }
-    }
-
-    function buildCardElement(card){
-      const el = document.createElement('div'); el.className='card';
-      const head = document.createElement('div'); head.className='head';
-      const name = document.createElement('div'); name.innerHTML = `<div class="name">${escapeHtml(card.name)}</div><div class="small muted">${escapeHtml(card.note||'')}</div>`;
-      const top = document.createElement('div'); top.innerHTML = `<div class="amount">Rs ${Number(card.amount).toFixed(2)}</div><div class="small">Updated: ${new Date(card.lastUpdated||card.createdAt||now()).toLocaleString()}</div>`;
-      head.appendChild(name); head.appendChild(top);
-      el.appendChild(head);
-
-      const actions = document.createElement('div'); actions.className='actions';
-      const btnTopUp = makeBtn('Top-up');
-      btnTopUp.onclick = () => withPassword(()=>promptTopUp(card.id));
-      const btnDelete = makeBtn('Delete');
-      btnDelete.onclick = () => withPassword(()=>deleteCard(card.id));
-      const btnExportSingle = makeBtn('Export');
-      btnExportSingle.onclick = ()=>exportSingle(card.id);
-      actions.appendChild(btnTopUp); actions.appendChild(btnDelete); actions.appendChild(btnExportSingle);
-
-      el.appendChild(actions);
-      return el;
-    }
-
-    function render(){
-      const q = searchInput.value.trim().toLowerCase();
-      const data = load();
-      // apply daily increase on load for all
-      data.forEach(card=>applyDailyIncrease(card));
-      save(data);
-
-      grid.innerHTML='';
-      const filtered = data.filter(c=>!q || c.name.toLowerCase().includes(q) || (c.note||'').toLowerCase().includes(q));
-      if(filtered.length===0){ grid.innerHTML = '<div class="small muted">No cards yet. Press + Add to create one.</div>'; return }
-      filtered.forEach(card=> grid.appendChild(buildCardElement(card)));
-    }
-
-    function makeBtn(text){ const b=document.createElement('button'); b.className='btn'; b.textContent=text; return b }
-
-    function escapeHtml(s){ return (s+'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
-
-    // modal helpers
-    const modal = $('#modal'); const modalContent = $('#modalContent'); const modalClose = $('#modalClose');
-    modalClose.onclick = ()=> modal.style.display='none';
-    function showModal(html){ modalContent.innerHTML = html; modal.style.display='flex'; }
-
-    // Add card flow
-    $('#btnAdd').onclick = ()=> withPassword(()=>showAddForm());
-    function showAddForm(){
-      showModal(`
-        <h3>Add Card</h3>
-        <div style="display:grid;gap:8px">
-          <label>Name <input id="fName" type="text"></label>
-          <label>Amount (Rs) <input id="fAmount" type="number" step="0.01" value="0"></label>
-          <label>Note <input id="fNote" type="text"></label>
-          <div style="text-align:right"><button id="saveNew" class="btn primary">Save</button></div>
+    <div class="overlay">
+        <div class="header">
+            <div class="logo">
+                <img src="logo.jpg" alt="Dragon Logo">
+                <h1>Dragon</h1>
+            </div>
+            <div class="controls">
+                <input type="text" id="search-input" placeholder="Search cards by name...">
+                <button class="button" onclick="openAddCardModal()">+</button>
+                <button class="button" onclick="openImportExportModal('export')">Export</button>
+                <button class="button" onclick="openImportExportModal('import')">Import</button>
+                <button class="button" onclick="downloadPDF()">PDF</button>
+            </div>
         </div>
-      `);
-      $('#saveNew').onclick = ()=>{
-        const name = $('#fName').value.trim();
-        const amount = parseFloat($('#fAmount').value)||0;
-        const note = $('#fNote').value.trim();
-        if(!name){alert('Please provide a name');return}
-        const data = load();
-        const card = {id:uid(),name,amount,note,createdAt:now(),lastUpdated:now()};
-        data.push(card); save(data); modal.style.display='none'; render();
-      }
-    }
 
-    // Top-up prompt
-    function promptTopUp(id){
-      const data = load(); const card = data.find(c=>c.id===id); if(!card) return;
-      showModal(`
-        <h3>Top-up: ${escapeHtml(card.name)}</h3>
-        <div style="display:grid;gap:8px">
-          <label>Amount to add (Rs) <input id="tuAmt" type="number" step="0.01" value="10"></label>
-          <label>Note (optional) <input id="tuNote" type="text"></label>
-          <div style="text-align:right"><button id="doTopUp" class="btn primary">Add</button></div>
+        <div class="main-content" id="card-container">
+            <!-- Cards will be dynamically added here -->
         </div>
-      `);
-      $('#doTopUp').onclick = ()=>{
-        const amt = parseFloat($('#tuAmt').value)||0; const note = $('#tuNote').value.trim();
-        card.amount = Number(card.amount) + amt; card.lastUpdated = now(); if(note) card.note = (card.note?card.note+'; ':'')+note;
-        save(data); modal.style.display='none'; render();
-      }
-    }
 
-    function deleteCard(id){ if(!confirm('Delete this card? This cannot be undone.')) return; const data = load(); const idx = data.findIndex(c=>c.id===id); if(idx>=0){data.splice(idx,1); save(data); render();} }
+        <!-- Add Card Modal -->
+        <div id="add-card-modal" class="add-card-modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeAddCardModal()">&times;</span>
+                <h2>Create New Card</h2>
+                <label for="card-name">Card Name:</label>
+                <input type="text" id="card-name" placeholder="Enter card name" required>
 
-    // import/export functionality
-    $('#btnExport').onclick = ()=> exportAll();
-    function exportAll(){
-      const data = load();
-      const payload = { exportedAt: now(), data };
-      const json = JSON.stringify(payload);
-      const code = btoa(unescape(encodeURIComponent(json)));
-      showModal(`<h3>Export Code</h3><div class="small muted">Copy this code and paste it into Import on another device.</div><pre class="codebox">${code}</pre><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px"><button id="copyCode" class="btn">Copy</button><button id="downloadCode" class="btn">Download</button></div>`);
-      $('#copyCode').onclick = ()=>{ navigator.clipboard.writeText(code).then(()=>alert('Copied to clipboard')) }
-      $('#downloadCode').onclick = ()=>{ const blob = new Blob([code],{type:'text/plain'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='dragon-export.txt'; a.click(); URL.revokeObjectURL(url); }
-    }
+                <label for="initial-amount">Initial Amount:</label>
+                <input type="number" id="initial-amount" placeholder="Enter initial amount" required>
 
-    $('#btnImport').onclick = ()=>{
-      showModal(`<h3>Import</h3><div class="small muted">Paste the export code from another device below.</div><textarea id="importCode" style="height:160px;width:100%"></textarea><div style="text-align:right;margin-top:8px"><button id="doImport" class="btn primary">Import</button></div>`)
-      $('#doImport').onclick = ()=>{
-        const code = $('#importCode').value.trim(); if(!code){alert('Paste the code');return}
-        try{
-          const json = decodeURIComponent(escape(atob(code)));
-          const payload = JSON.parse(json);
-          if(!payload.data) throw new Error('Invalid payload');
-          // Confirm: importing will replace existing cards from exported device into this device (merge)
-          const existing = load();
-          // We will merge: items with same id will be overwritten, others added
-          const map = new Map(existing.map(i=>[i.id,i]));
-          payload.data.forEach(item=> map.set(item.id,item));
-          const merged = Array.from(map.values());
-          save(merged); modal.style.display='none'; render();
-          alert('Import completed.');
-        }catch(e){console.error(e); alert('Import failed: invalid code')}
-      }
-    }
+                <label for="daily-add-amount">Daily Add Amount (optional, default 10):</label>
+                <input type="number" id="daily-add-amount" placeholder="Enter daily add amount">
 
-    function exportSingle(id){ const data=load(); const card = data.find(c=>c.id===id); if(!card) return; const payload={exportedAt:now(),data:[card]}; const code=btoa(unescape(encodeURIComponent(JSON.stringify(payload)))); showModal(`<h3>Export Single Card</h3><pre class="codebox">${code}</pre><div style="text-align:right"><button id="copyS" class="btn">Copy</button></div>`); $('#copyS').onclick=()=>{navigator.clipboard.writeText(code).then(()=>alert('Copied'))} }
+                <div class="modal-buttons">
+                    <button class="button" onclick="createCard()">Create</button>
+                    <button class="button delete-button" onclick="closeAddCardModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
 
-    // PDF generation using jsPDF from CDN
-    async function makePDF(){
-      // ensure password check
-      const pw = prompt('Enter password to create PDF'); if(pw !== ACTION_PW){ alert('Wrong password'); return }
-      // load jsPDF if not present
-      if(typeof window.jspdf === 'undefined'){
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
-      }
-      const { jsPDF } = window.jspdf || window.jspdf || window.jspdf;
-      const doc = new jsPDF({unit:'pt',format:'a4'});
-      const data = load();
-      let y = 40; doc.setFontSize(16); doc.text('Dragon — Cards Export',40,y); y+=24; doc.setFontSize(11);
-      if(data.length===0){ doc.text('No cards',40,y) }
-      data.forEach((c,idx)=>{
-        y+=14; if(y>760){ doc.addPage(); y=40 }
-        doc.text(`${idx+1}. ${c.name} — Rs ${Number(c.amount).toFixed(2)}`,40,y);
-        y+=12; if(c.note) doc.text(`   Note: ${c.note}`,40,y);
-        y+=8; doc.text(`   Created: ${new Date(c.createdAt).toLocaleString()}  Updated: ${new Date(c.lastUpdated||c.createdAt).toLocaleString()}`,40,y);
-      })
-      doc.save('dragon_cards.pdf');
-    }
+        <!-- Password Modal for Delete -->
+        <div id="password-modal" class="password-modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closePasswordModal()">&times;</span>
+                <h2>Confirm Deletion</h2>
+                <p>Please enter the password to delete this card.</p>
+                <label for="delete-password">Password:</label>
+                <input type="password" id="delete-password" placeholder="Enter password" required>
+                <div class="modal-buttons">
+                    <button class="button delete-button" onclick="verifyPasswordAndRemoveCard()">Delete</button>
+                    <button class="button" onclick="closePasswordModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
 
-    $('#btnPdf').onclick = ()=> makePDF();
+        <!-- Import/Export Modal -->
+        <div id="importExportModal" class="import-export-modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeImportExportModal()">&times;</span>
+                <h2 id="importExportModalTitle"></h2>
+                <textarea id="importExportData" readonly></textarea>
+                <div class="modal-buttons">
+                    <button class="button" id="copyExportData" style="display: none;" onclick="copyExportData()">Copy</button>
+                    <button class="button" id="pasteImportData" style="display: none;" onclick="pasteImportData()">Import</button>
+                    <button class="button delete-button" onclick="closeImportExportModal()">Close</button>
+                </div>
+            </div>
+        </div>
 
-    // utility to load a script
-    function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.onload=res; s.onerror=rej; document.head.appendChild(s); }) }
+    </div>
 
-    // password wrapper for actions
-    function withPassword(action){
-      const pw = prompt('Enter password to continue'); if(pw !== ACTION_PW){ alert('Wrong password'); return }
-      try{ action(); }catch(e){console.error(e)}
-    }
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        let cards = [];
+        let cardToDeleteId = null; // To store the ID of the card to be deleted
 
-    // initial render
-    searchInput.addEventListener('input', debounce(render,300));
-    render();
+        // Load cards from localStorage on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCards();
+            renderCards(cards);
+            startDailyAmountUpdater();
+            document.getElementById('search-input').addEventListener('input', searchCards);
+        });
 
-    // debounce
-    function debounce(fn,ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms) } }
+        function saveCards() {
+            localStorage.setItem('dragonCards', JSON.stringify(cards));
+        }
 
-    // allow viewing cards created on other devices: since we merge by import code, cards imported will appear here
+        function loadCards() {
+            const storedCards = localStorage.getItem('dragonCards');
+            if (storedCards) {
+                cards = JSON.parse(storedCards);
+            }
+        }
 
-    // keyboard shortcut: + to open add
-    window.addEventListener('keydown', e=>{ if(e.key==='+'){ withPassword(()=>showAddForm()) } })
+        function openAddCardModal() {
+            document.getElementById('add-card-modal').style.display = 'flex';
+            document.getElementById('card-name').value = '';
+            document.getElementById('initial-amount').value = '';
+            document.getElementById('daily-add-amount').value = '';
+        }
 
-  </script>
+        function closeAddCardModal() {
+            document.getElementById('add-card-modal').style.display = 'none';
+        }
+
+        function createCard() {
+            const name = document.getElementById('card-name').value;
+            const initialAmount = parseFloat(document.getElementById('initial-amount').value);
+            let dailyAddAmount = parseFloat(document.getElementById('daily-add-amount').value);
+
+            if (!name || isNaN(initialAmount)) {
+                alert('Please enter a valid card name and initial amount.');
+                return;
+            }
+
+            if (isNaN(dailyAddAmount)) {
+                dailyAddAmount = 10; // Default to 10 if not provided
+            }
+
+            const newCard = {
+                id: Date.now(), // Unique ID for each card
+                name: name,
+                amount: initialAmount,
+                dailyAddAmount: dailyAddAmount,
+                lastUpdated: new Date().toISOString() // Track last update for daily increment
+            };
+
+            cards.push(newCard);
+            saveCards();
+            renderCards(cards);
+            closeAddCardModal();
+        }
+
+        function renderCards(cardList) {
+            const container = document.getElementById('card-container');
+            container.innerHTML = ''; // Clear existing cards
+
+            if (cardList.length === 0) {
+                container.innerHTML = '<p style="text-align: center; width: 100%; margin-top: 50px; font-size: 18px; color: #aaa;">No cards found. Click "+" to create one!</p>';
+                return;
+            }
+
+            cardList.forEach(card => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'card';
+                cardElement.innerHTML = `
+                    <h3>${card.name}</h3>
+                    <p>Current Balance: <span class="amount">Rs. ${card.amount.toFixed(2)}</span></p>
+                    <p>Daily Increment: Rs. ${card.dailyAddAmount.toFixed(2)}</p>
+                    <div class="card-actions">
+                        <button class="button delete-button" onclick="confirmDelete(${card.id})">Delete</button>
+                    </div>
+                `;
+                container.appendChild(cardElement);
+            });
+        }
+
+        function searchCards() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filteredCards = cards.filter(card => card.name.toLowerCase().includes(searchTerm));
+            renderCards(filteredCards);
+        }
+
+        function confirmDelete(id) {
+            cardToDeleteId = id;
+            document.getElementById('password-modal').style.display = 'flex';
+            document.getElementById('delete-password').value = ''; // Clear previous password
+        }
+
+        function closePasswordModal() {
+            document.getElementById('password-modal').style.display = 'none';
+            cardToDeleteId = null;
+        }
+
+        function verifyPasswordAndRemoveCard() {
+            const password = document.getElementById('delete-password').value;
+            if (password === 'yethula') {
+                removeCard(cardToDeleteId);
+                closePasswordModal();
+            } else {
+                alert('Incorrect password. Card not deleted.');
+            }
+        }
+
+        function removeCard(id) {
+            cards = cards.filter(card => card.id !== id);
+            saveCards();
+            renderCards(cards);
+        }
+
+        function startDailyAmountUpdater() {
+            // Run this function once immediately to update for any missed days
+            updateDailyAmounts();
+
+            // Then set an interval to run it daily (or more frequently for demo purposes)
+            // For actual daily updates, you might want to run this once a day at a specific time.
+            // For this demo, let's run it every minute to show the effect.
+            // In a production environment, consider server-side updates or more robust client-side scheduling.
+            setInterval(updateDailyAmounts, 60 * 60 * 1000); // Check every hour
+        }
+
+        function updateDailyAmounts() {
+            const now = new Date();
+            let updated = false;
+
+            cards.forEach(card => {
+                const lastUpdated = new Date(card.lastUpdated);
+                const diffTime = Math.abs(now - lastUpdated);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Calculate whole days passed
+
+                if (diffDays >= 1) {
+                    card.amount += card.dailyAddAmount * diffDays;
+                    card.lastUpdated = now.toISOString(); // Update last updated timestamp
+                    updated = true;
+                }
+            });
+
+            if (updated) {
+                saveCards();
+                renderCards(cards);
+            }
+        }
+
+        // Import/Export Functionality
+        function openImportExportModal(mode) {
+            const modal = document.getElementById('importExportModal');
+            const title = document.getElementById('importExportModalTitle');
+            const textarea = document.getElementById('importExportData');
+            const copyButton = document.getElementById('copyExportData');
+            const pasteButton = document.getElementById('pasteImportData');
+
+            textarea.value = ''; // Clear previous data
+            copyButton.style.display = 'none';
+            pasteButton.style.display = 'none';
+
+            if (mode === 'export') {
+                title.textContent = 'Export Cards Data';
+                textarea.readOnly = true;
+                textarea.value = btoa(JSON.stringify(cards)); // Base64 encode for simple security/integrity
+                copyButton.style.display = 'inline-block';
+            } else if (mode === 'import') {
+                title.textContent = 'Import Cards Data';
+                textarea.readOnly = false;
+                textarea.placeholder = 'Paste exported data here...';
+                pasteButton.style.display = 'inline-block';
+            }
+            modal.style.display = 'flex';
+        }
+
+        function closeImportExportModal() {
+            document.getElementById('importExportModal').style.display = 'none';
+        }
+
+        function copyExportData() {
+            const textarea = document.getElementById('importExportData');
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            document.execCommand('copy');
+            alert('Data copied to clipboard!');
+        }
+
+        function pasteImportData() {
+            const textarea = document.getElementById('importExportData');
+            const data = textarea.value;
+            if (data) {
+                try {
+                    const decodedData = JSON.parse(atob(data));
+                    if (Array.isArray(decodedData) && decodedData.every(item => typeof item === 'object' && item !== null && 'id' in item && 'name' in item && 'amount' in item)) {
+                        cards = decodedData;
+                        saveCards();
+                        renderCards(cards);
+                        alert('Cards imported successfully!');
+                        closeImportExportModal();
+                    } else {
+                        alert('Invalid import data format.');
+                    }
+                } catch (e) {
+                    console.error("Error importing data:", e);
+                    alert('Invalid data format or corrupted data.');
+                }
+            } else {
+                alert('Please paste data to import.');
+            }
+        }
+
+        // PDF Generation
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(22);
+            doc.text("Dragon Card Summary", 14, 20);
+
+            doc.setFontSize(12);
+            let yOffset = 30;
+
+            if (cards.length === 0) {
+                doc.text("No cards available.", 14, yOffset);
+            } else {
+                cards.forEach((card, index) => {
+                    yOffset += 10;
+                    doc.setFontSize(14);
+                    doc.text(`Card Name: ${card.name}`, 14, yOffset);
+                    yOffset += 7;
+                    doc.setFontSize(12);
+                    doc.text(`Current Balance: Rs. ${card.amount.toFixed(2)}`, 14, yOffset);
+                    yOffset += 7;
+                    doc.text(`Daily Increment: Rs. ${card.dailyAddAmount.toFixed(2)}`, 14, yOffset);
+                    yOffset += 5; // Extra spacing between cards
+                    if (yOffset > 280) { // Check if new page is needed
+                        doc.addPage();
+                        yOffset = 20; // Reset yOffset for new page
+                    }
+                });
+            }
+
+            doc.save("Dragon_Card_Summary.pdf");
+        }
+    </script>
 </body>
-</html>
+</html>s
